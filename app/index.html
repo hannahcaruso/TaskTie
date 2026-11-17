@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TaskTie</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Palette: grassy lime greens · cherry/berry pinks · honeydew yellow */
+:root{--bg:#FAFCF3;--surface:#FFFFFF;--ink:#2C3A28;--muted:#5D6A57;
+--primary:#4E7A2E;--primary2:#3E6324;--gold:#8CC152;--lime:#C8E6A0;--grass:#2F4A24;
+--tan:#DCE6A8;--tanBg:#F4F8DC;--olive:#D7EDB8;--oliveT:#2F5418;
+--rose:#E07A9B;--roseT:#B23A62;--roseBg:#FBE3EA;--berryLt:#F4C6D3;
+--amberT:#7A6410;--amberBg:#F8F2C4;--waitBg:#EEF1E6;--border:#E2E9D4;--field:#C9D4B6;--coral:var(--roseT);--sage2:var(--oliveT)}
+html{font-size:var(--fs,17px)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font:400 1rem/1.6 Inter,system-ui,sans-serif}
+h1,h2,h3,.serif{font-family:'Playfair Display',Georgia,serif;font-weight:600;line-height:1.25}
+a{color:var(--primary)}
+header{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:5}
+.bar{max-width:1160px;margin:0 auto;padding:.85rem 1rem;display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
+.logo{width:2.2rem;height:2.2rem;border-radius:.65rem;background:var(--gold);display:grid;place-items:center;flex:none}
+.logo svg{width:1.35rem;height:1.35rem}
+.brand{font-size:1.5rem;cursor:pointer}
+.crumb{color:var(--muted);font-size:.94rem}
+.crumb b{color:var(--ink)}
+.spacer{flex:1}
+.fsz{display:flex;align-items:center;gap:.25rem;background:var(--tanBg);border:1px solid var(--border);border-radius:.75rem;padding:.2rem .3rem}
+.fsz span{font-size:.8rem;color:var(--muted);font-weight:600;padding:0 .4rem}
+.fsz button{background:none;border:0;border-radius:.5rem;padding:.25rem .55rem;font:700 .9rem Inter,sans-serif;color:var(--ink);cursor:pointer;line-height:1.2}
+.fsz button.on{background:var(--surface);box-shadow:0 1px 3px rgba(58,46,40,.18)}
+nav{max-width:1160px;margin:0 auto;padding:0 1rem;display:flex;gap:.25rem;overflow-x:auto}
+nav button{background:none;border:0;border-bottom:3px solid transparent;padding:.65rem .9rem;font:600 .94rem Inter,sans-serif;color:var(--muted);cursor:pointer;white-space:nowrap}
+nav button:hover{color:var(--ink)}
+nav button.on{color:var(--ink);border-color:var(--gold)}
+.n{display:inline-block;min-width:1.4rem;padding:0 .4rem;border-radius:1rem;font-size:.75rem;margin-left:.4rem;background:var(--roseBg);color:var(--roseT);text-align:center}
+main{max-width:1160px;margin:0 auto;padding:1.5rem 1rem 6rem}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:1rem;padding:1.3rem 1.4rem;margin-bottom:1.15rem}
+.card h2{font-size:1.4rem;margin-bottom:.25rem}
+.card h3{font-size:1.15rem;margin-bottom:.4rem}
+.head{display:flex;align-items:center;justify-content:space-between;gap:.6rem;flex-wrap:wrap;margin-bottom:.4rem}
+.hint{color:var(--muted);font-size:.9rem;margin-bottom:.9rem;max-width:70ch}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,19rem),1fr));gap:1.15rem}
+.g2{display:grid;grid-template-columns:1.4fr 1fr;gap:1.15rem}
+@media(max-width:860px){.g2{grid-template-columns:1fr}}
+label{font-weight:600;font-size:.88rem;display:block;margin-bottom:.25rem}
+input,select,textarea{font:inherit;font-size:.95rem;padding:.6rem .75rem;border:1px solid var(--field);border-radius:.65rem;background:#fff;color:var(--ink);width:100%}
+input:focus,select:focus,button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:1px}
+.row{display:flex;gap:.65rem;align-items:flex-end;flex-wrap:wrap}
+.row>*{flex:1;min-width:7.5rem}
+.btn{background:var(--primary);color:#fff;border:0;border-radius:.75rem;padding:.7rem 1.25rem;font:600 .94rem Inter,sans-serif;cursor:pointer;flex:none;text-decoration:none;display:inline-block}
+.btn:hover{background:var(--primary2)}
+.btn.ghost{background:#fff;color:var(--primary);border:1px solid var(--tan)}
+.btn.ghost:hover{background:var(--tanBg)}
+.btn.sm{padding:.4rem .8rem;font-size:.82rem;border-radius:.6rem}
+.btn.danger{background:#fff;color:var(--roseT);border:1px solid var(--rose)}
+.x{background:none;border:0;color:var(--muted);cursor:pointer;font-size:1.25rem;flex:none;padding:0 .3rem}
+.list>div{display:flex;align-items:center;gap:.65rem;padding:.75rem 0;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.list>div:last-child{border-bottom:0}
+.grow{flex:1;min-width:11rem}
+.sub{color:var(--muted);font-size:.84rem}
+.note{color:var(--amberT);font-size:.82rem;font-style:italic}
+.chip{font-size:.8rem;font-weight:600;padding:.25rem .75rem;border-radius:1.25rem;white-space:nowrap;flex:none;display:inline-block}
+.ok{background:var(--olive);color:var(--oliveT)}.no{background:var(--roseBg);color:var(--roseT)}.two,.cf,.re{background:var(--amberBg);color:var(--amberT)}.wait{background:var(--waitBg);color:var(--muted)}
+.flagrow{background:#FDF2F5;border-radius:.65rem;padding-left:.65rem!important;padding-right:.65rem!important}
+.checks{display:flex;gap:1rem;flex-wrap:wrap}
+.checks label{display:flex;gap:.5rem;align-items:center;font-weight:500}
+input[type=checkbox]{width:1.25rem;height:1.25rem;accent-color:var(--primary);flex:none}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,10.5rem),1fr));gap:.75rem;margin-bottom:1.15rem}
+.stat{background:var(--surface);border:1px solid var(--border);border-top:4px solid var(--gold);border-radius:.9rem;padding:.85rem 1rem;cursor:pointer}
+.stat.alert{border-top-color:var(--rose)}
+.stat b{display:block;font:600 1.9rem 'Playfair Display',serif}
+.tl{display:grid;grid-template-columns:6.2rem 4.8rem 1fr auto;gap:.65rem;align-items:center;padding:.65rem 0;border-bottom:1px solid var(--border)}
+.tl input{padding:.4rem .5rem}
+.tm{font-weight:700;color:var(--primary)}
+.empty{text-align:center;color:var(--muted);padding:2rem}
+.sugg{background:var(--tanBg);border-radius:.75rem;padding:.65rem .75rem;display:flex;align-items:center;gap:.65rem;margin-bottom:.5rem}
+.next{background:var(--grass);color:#fff;border-radius:1rem;padding:1.25rem 1.4rem;margin-bottom:1.15rem}
+.next .sub{color:#DDE8CC}
+.next h2{font-size:1.5rem;margin:.15rem 0 .4rem}
+.next .btn{background:var(--lime);color:var(--ink)}
+.next .btn:hover{background:#B5DC85}
+.steps{display:flex;gap:.4rem;margin-top:.9rem;flex-wrap:wrap}
+.steps span{flex:1;min-width:7.5rem;font-size:.82rem;font-weight:600;padding:.5rem .65rem;border-radius:.65rem;background:rgba(255,255,255,.1);color:#DDE8CC}
+.steps span.done{background:var(--lime);color:var(--ink)}
+.steps span.cur{background:#fff;color:var(--ink)}
+.wcard{background:var(--surface);border:1px solid var(--border);border-left:5px solid var(--berryLt);border-radius:1rem;padding:1.1rem 1.25rem;cursor:pointer;transition:.15s}
+.wcard:hover{border-color:var(--gold);box-shadow:0 8px 24px rgba(44,58,40,.1)}
+.prog{height:.5rem;background:var(--waitBg);border-radius:.4rem;overflow:hidden;margin:.65rem 0 .4rem}
+.prog i{display:block;height:100%;background:var(--gold)}
+.tips{background:var(--tanBg);border:1px solid var(--berryLt);border-radius:1rem;padding:1rem 1.25rem;margin-bottom:1.15rem;display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap}
+.tips ol{margin-left:1.25rem;font-size:.95rem}
+.vmeta{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,8.5rem),1fr));gap:.5rem;width:100%;padding-left:2rem}
+.vmeta input{padding:.4rem .55rem;font-size:.85rem}
+.vmeta label{font-size:.75rem;color:var(--muted);margin-bottom:.1rem}
+.sec{font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--primary);margin:.9rem 0 .1rem}
+.toast{position:fixed;left:50%;bottom:1.5rem;transform:translateX(-50%);background:var(--ink);color:#fff;padding:.75rem 1.1rem;border-radius:.75rem;font-weight:600;opacity:0;transition:.25s;pointer-events:none;display:flex;gap:.9rem;align-items:center;z-index:9;max-width:92vw}
+.toast.on{opacity:1;pointer-events:auto}
+.toast button{background:none;border:1px solid #fff;color:#fff;border-radius:.5rem;padding:.25rem .65rem;font:600 .8rem Inter;cursor:pointer}
+.print-only{display:none}
+@media(max-width:640px){.tl{grid-template-columns:5.2rem 4rem 1fr}.tl .chip{grid-column:3;justify-self:start}.vmeta{padding-left:0}}
+@media print{body *{visibility:hidden}.print-only,.print-only *{visibility:visible}.print-only{display:block;position:absolute;left:0;top:0;width:100%;padding:20px}
+ .print-only h2{font-size:20px;margin:16px 0 4px}.print-only li{margin:3px 0 3px 18px}.print-only .sub{font-size:12px}}
+</style>
+</head>
+<body>
+<header id="hdr"></header>
+<main id="main"></main>
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== standard task library, from vendor-task-checklist.md =====
+// Each task: [name, default start "HH:MM", minutes, involves the couple?, note]
+// Default times assume a 5:00 PM ceremony; planners can change any of them and TaskTie remembers task lengths.
+const SRC={
+ "Caterer":{
+  "Setup":[["Set up and dress guest tables and chairs","13:00",60],["Lay linens, overlays and napkins","14:00",45,0,"Folded or placed per design"],["Set place settings: flatware, plates, chargers, glassware","14:45",45],
+   ["Place menu cards, place cards and table numbers","15:30",20,0,"Confirm if florist or planner does this instead"],["Fill water glasses before guests are seated","18:15",10],["Set up buffet or station tables, chafers and signage","15:50",30],["Set up cocktail hour tables and high-tops","16:20",20]],
+  "Service":[["Pass hors d'oeuvres during cocktail hour","17:30",60],["Prepare and deliver plates for couple and wedding party","18:40",15,1],["Serve dinner by the agreed timeline","18:45",60,0,"Plated, buffet or family style"],
+   ["Handle dietary and allergy meals by table and seat","18:45",20],["Refill water and clear courses","19:15",45],["Pour champagne for toasts","19:40",10],["Feed vendors (photographer, DJ, planner)","19:00",20,0,"At the agreed time"],
+   ["Cut and plate the wedding cake after the cake cutting","20:20",20],["Serve coffee, dessert and late-night snacks","21:30",30]],
+  "Wrap-up":[["Box a to-go meal and top tier of cake for the couple","22:30",10],["Return cake knife, toasting flutes and keepsakes to the family","22:45",10],["Clear tables, strip linens and pack rentals for pickup","23:00",45],["Remove trash and leave kitchen per venue rules","23:30",30]]},
+ "DJ / band":{
+  "Ceremony":[["Set up ceremony sound system and microphones","15:30",45],["Mic the officiant (lavalier) and set a mic for readers","16:45",10],["Play prelude music as guests arrive","16:30",30],["Cue processional, couple's entrance, recessional","17:00",30,0,"On the planner's signal"]],
+  "Reception announcements":[["Announce the start of cocktail hour and where to go","17:30",5],["Ask guests to take their seats","18:25",5],["Announce the wedding party and couple's grand entrance","18:30",5,1],["Announce dinner and release tables to the buffet","18:45",5,0,"If applicable"],
+   ["Introduce toasts and hand off the mic","19:45",15],["Announce first dance, parent dances and cake cutting","20:00",20,1],["Announce bouquet and garter toss","21:00",10,1,"If included"],["Announce last dance and the send-off","22:45",10,1]],
+  "Music and logistics":[["Play cocktail hour and dinner background music","17:30",75],["Follow the couple's must-play and do-not-play lists","20:30",120],["Coordinate timing cues with planner, caterer and photographer","16:00",15],
+   ["Provide dance floor lighting or uplighting","15:00",30,0,"If contracted"],["Strike equipment by the venue's load-out time","23:00",45]]},
+ "Photographer":{
+  "Coverage":[["Capture getting-ready and detail shots","13:00",90,1,"Rings, invitation, dress, shoes"],["Run the first look","15:15",20,1,"If planned"],["Cover the ceremony without blocking guest views","17:00",30],
+   ["Lead family and wedding party formals from the shot list","17:45",30,1],["Photograph the room and tables before guests enter","18:00",15],["Cover entrances, toasts, first dance, cake cutting and send-off","18:30",30],["Take sunset or night portraits","19:20",20,1,"At the agreed time"]]},
+ "Videographer":{"Coverage":[["Capture ceremony and toast audio","17:00",30]]},
+ "Florist":{"Florals":[["Deliver bouquets, boutonnieres and corsages to getting-ready locations","12:00",30],["Pin boutonnieres and corsages","15:00",20,0,"If contracted"],["Install ceremony arch, aisle and altar florals","14:00",60],["Set centerpieces and head table florals","15:00",45],
+   ["Decorate the cake with fresh flowers","16:15",15,0,"If requested"],["Move ceremony florals to the reception (flip)","17:35",20,0,"If contracted"],["Pick up vessels and installations after the event","23:00",30]]},
+ "Venue coordinator":{"Venue":[["Unlock spaces and confirm vendor load-in times and entrances","11:00",30],["Set the ceremony chairs and reception floor plan","12:00",60],["Manage climate, lighting and restrooms","16:00",15],
+   ["Enforce venue rules (candles, confetti, sparklers, noise curfew)","17:00",15],["Execute the rain plan","13:00",30,0,"If needed"],["Lock up and confirm all vendors have left","23:30",20]]},
+ "Bakery":{"Cake":[["Deliver and assemble the cake","15:30",45,0,"At the agreed time"],["Set up the cake table and dessert display","15:30",20],["Place the cake topper","16:15",5],["Pick up cake stand and display pieces","23:00",15,0,"If rented"]]},
+ "Bar service":{"Bar":[["Set up the bar, ice, garnishes and glassware","16:00",45],["Serve the signature cocktails","17:30",30],["Check IDs and refuse service to intoxicated guests","17:30",15],["Pour champagne for toasts","19:40",10,0,"If not handled by catering"],["Close the bar and announce last call","22:30",10,0,"At the agreed time"]]},
+ "Rentals":{"Rentals":[["Deliver tables, chairs, linens, tent, dance floor or lounge furniture","10:00",60],["Set up and break down rental items","11:00",60,0,"If contracted; otherwise confirm who does"],["Pick up all rental items","23:30",45,0,"At the agreed time"]]},
+ "Officiant":{"Ceremony":[["Lead the ceremony rehearsal","09:00",30,0,"If contracted, usually the day before"],["Arrive early and meet the couple and planner","16:30",15,1],["Perform the ceremony","17:00",30,1],["Sign the marriage license with the couple and witnesses","17:35",10,1],["File the license","23:00",10,0,"Or confirm who will"]]},
+ "Hair & makeup":{"Getting ready":[["Follow the getting-ready schedule by person","09:30",180,1],["Finish the couple and wedding party before photo time","12:30",15,1],["Leave a touch-up kit, or stay for touch-ups","16:30",15,0,"If contracted"]]},
+ "Transportation":{"Transportation":[["Pick up the couple and wedding party on schedule","16:00",20,1],["Run guest shuttles between hotel, ceremony and reception","16:00",30],["Provide the getaway car at send-off","22:55",10,1],["Confirm the driver's day-of number and backup plan","12:00",5]]},
+};
+// flatten to LIB[type] = [[name,time,dur,couple,section,note],...]
+const LIB=Object.fromEntries(Object.entries(SRC).map(([ty,secs])=>[ty,Object.entries(secs).flatMap(([sec,ts])=>ts.map(t=>[t[0],t[1],t[2],t[3]||0,sec,t[4]||""]))]));
+const SECS=[...new Set(Object.values(SRC).flatMap(o=>Object.keys(o)))];
+// "Gaps to assign": often assumed to be someone else's job. Added to every wedding with no owner.
+const GAPS=[["Set out guest book, card box, favors and welcome sign","16:00",15],["Place escort cards and the seating chart","16:15",15],["Light candles","16:30",15,0,"Confirm the venue allows open flame"],
+ ["Hand out programs and reserve front-row seats","16:30",15],["Cue the wedding party to line up for the processional and entrances","16:50",10],["Collect the cards and gifts and give them to a named family member","22:30",15],
+ ["Hand vendor tips and final payments to each vendor","22:00",20],["Pack the couple's personal items, decor and leftover alcohol","23:00",30],["Supply sparklers or send-off items, and a lighter","22:40",10]];
+const SUGG={
+  outdoor:[["Hand out sunscreen, fans and water to guests","16:30",20],["Check the lawn and provide heel protectors","16:15",10]],
+  pets:[["Bring the pet to the ceremony","16:45",15],["Take the pet home after photos","18:15",30]],
+  sparklers:[["Line up guests for the sparkler exit","22:50",10,1]],
+  cultural:[["Set up for the cultural ceremony or tradition","16:00",30],["Brief vendors on tradition timing","15:00",15]],
+};
+const DETAILS={outdoor:"Outdoor ceremony",pets:"Pet in the wedding",sparklers:"Sparkler exit",cultural:"Cultural traditions"};
+const PLANNER="planner";
+
+// ===== state =====
+const KEY="tasktie-v3";
+const fresh=()=>({weddings:[],learned:{},myGaps:[],cur:null,tab:"overview",cv:null,hideTips:false});
+let S;const load=()=>{try{S=JSON.parse(localStorage.getItem(KEY))||fresh();}catch(e){S=fresh();}};load();
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}};
+const uid=()=>Math.random().toString(36).slice(2,9);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const toMin=h=>{const[a,b]=h.split(":").map(Number);return a*60+b;};
+const toHM=m=>{m=((m%1440)+1440)%1440;return String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(2,"0");};
+const fmt=m=>{m=((m%1440)+1440)%1440;let h=Math.floor(m/60),mm=m%60,ap=h>=12?"PM":"AM";h=h%12||12;return`${h}:${String(mm).padStart(2,"0")} ${ap}`;};
+const W=()=>S.weddings.find(w=>w.id===S.cur);
+const dateStr=d=>d?new Date(d+"T12:00").toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric",year:"numeric"}):"No date set";
+const daysTo=d=>d?Math.ceil((new Date(d+"T12:00")-new Date())/864e5):null;
+const vName=(w,id)=>id===PLANNER?"You (planner)":(w.vendors.find(v=>v.id===id)||{}).name||"?";
+
+// ===== model helpers =====
+const today=()=>new Date().toISOString().slice(0,10);
+const addDays=(d,n)=>{const x=new Date(d+"T12:00");x.setDate(x.getDate()+n);return x.toISOString().slice(0,10);};
+const sd=d=>d?new Date(d+"T12:00").toLocaleDateString(undefined,{month:"short",day:"numeric"}):"—";
+const isDue=v=>v.followUp||(v.nextCheck&&v.nextCheck<=today());
+function newWedding(name,date){const w={id:uid(),name,date,details:{},vendors:[],tasks:[],lessons:"",finalSent:false};S.weddings.push(w);
+  (S.myGaps||[]).forEach(g=>{const t=addTask(w,g[0],g[1],g[2],0,0,"My standard tasks","Added from lessons learned");if(t)t.gap=true;});
+  GAPS.forEach(g=>{const t=addTask(w,g[0],g[1],g[2],g[3],0,"Gaps to assign",g[4]);t.gap=true;});return w;}
+function addTask(w,name,time,dur,couple,custom,sec,note){
+  if(w.tasks.some(t=>t.name.toLowerCase()===name.toLowerCase()))return null;
+  const t={id:uid(),name,time,dur:+(S.learned[name]||dur),couple:!!couple,claims:[],custom:!!custom,sec:sec||(custom?"Unique to this wedding":""),note:note||""};w.tasks.push(t);return t;
+}
+function addVendor(w,type,name,email){
+  const v={id:uid(),type,name:name||type,email:email||"",emailed:false,responded:false,contact:"",phone:"",arrival:"",loadout:""};w.vendors.push(v);
+  // typical tasks are pre-filled as "expected" until the vendor confirms on their checklist
+  (LIB[type]||[]).forEach(x=>{const t=addTask(w,x[0],x[1],x[2],x[3],0,x[4],x[5])||w.tasks.find(t=>t.name===x[0]);if(x[5]&&!t.note.includes(x[5]))t.note=t.note?t.note+" · "+x[5]:x[5];if(!t.claims.some(c=>c.v===v.id))t.claims.push({v:v.id,st:"expected"});});
+  return v;
+}
+function flags(w){
+  const F={};
+  w.tasks.forEach(t=>{const n=t.claims.length;if(n===0)F[t.id]={k:"no"};else if(n>1)F[t.id]={k:"two"};});
+  const c=w.tasks.filter(t=>t.couple&&t.claims.length);
+  for(let i=0;i<c.length;i++)for(let j=i+1;j<c.length;j++){
+    const a=c[i],b=c[j],a0=toMin(a.time),b0=toMin(b.time);
+    if(a0<b0+b.dur&&b0<a0+a.dur){if(!F[a.id])F[a.id]={k:"cf",o:b};if(!F[b.id])F[b.id]={k:"cf",o:a};}
+  }
+  return F;
+}
+const FL={no:["no","No owner"],two:["two","Two owners"],cf:["cf","⚠ Time conflict"]};
+function stats(w){
+  const F=flags(w),claims=w.tasks.flatMap(t=>t.claims.filter(c=>c.v!==PLANNER));
+  return{F,nf:Object.keys(F).length,emailed:w.vendors.filter(v=>v.emailed).length,
+    confirmed:claims.filter(c=>c.st==="confirmed").length,total:claims.length,
+    waitingV:w.vendors.filter(v=>w.tasks.some(t=>t.claims.some(c=>c.v===v.id&&c.st!=="confirmed"))).length,
+    recheck:claims.filter(c=>c.st==="recheck").length};
+}
+function ownerChips(w,t){
+  return t.claims.map(c=>{const cls=c.v===PLANNER||c.st==="confirmed"?"ok":c.st==="recheck"?"re":"wait";
+    const lbl=c.v===PLANNER?"✓ You":c.st==="confirmed"?"✓ "+esc(vName(w,c.v)):c.st==="recheck"?"↻ "+esc(vName(w,c.v))+": re-confirm":esc(vName(w,c.v))+": awaiting";
+    return`<span class="chip ${cls}">${lbl}</span>`;}).join(" ");
+}
+const vLink=(w,v)=>location.href.split("#")[0]+`#v/${w.id}/${v.id}`;
+
+// ===== rendering =====
+function render(){
+  if(location.hash.startsWith("#v/"))return renderVendor();
+  const w=W();if(!w){S.cur=null;}
+  const st=w&&stats(w);
+  document.getElementById("hdr").innerHTML=`<div class="bar">
+    <div class="logo"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="brand serif" onclick="home()">TaskTie</div>
+    ${w?`<div class="crumb"><a href="javascript:home()">Weddings</a> / <b>${esc(w.name)}</b> · ${dateStr(w.date)}</div>`:`<div class="crumb">Your weddings</div>`}
+    <div class="spacer"></div>${fsCtl()}</div>
+    ${w?`<nav>${[["overview","Overview"],["vendors","Vendors"],["tasks","Tasks & flags"],["timeline","Timeline"],["details","Wedding details"]].map(([k,l])=>`<button class="${S.tab===k?"on":""}" onclick="go('${k}')">${l}${k==="tasks"&&st.nf?`<span class="n">${st.nf}</span>`:""}${k==="vendors"&&w.vendors.length-st.emailed>0?`<span class="n" style="background:var(--amberBg);color:var(--amberT)">${w.vendors.length-st.emailed}</span>`:""}</button>`).join("")}</nav>`:""}`;
+  document.getElementById("main").innerHTML=w?V[S.tab](w,st):dashboard();
+  save();
+}
+const SIZES=[["Small",15],["Default",17],["Large",19],["Extra large",21]];
+function fsCtl(){return`<div class="fsz" role="group" aria-label="Text size"><span>Text size</span>${SIZES.map(([l,px],i)=>`<button class="${(S.fs||17)===px?"on":""}" title="${l}" aria-label="${l} text" onclick="setFs(${px})" style="font-size:${.7+i*.12}rem">A</button>`).join("")}</div>`;}
+function setFs(px){S.fs=px;save();applyFs();render();}
+function applyFs(){document.documentElement.style.setProperty("--fs",(S.fs||17)+"px");}
+function go(k){S.tab=k;render();scrollTo(0,0);}
+function home(){S.cur=null;render();scrollTo(0,0);}
+function openW(id){S.cur=id;S.tab="overview";render();scrollTo(0,0);}
+
+// ----- dashboard -----
+function dashboard(){
+  const ws=[...S.weddings].sort((a,b)=>(a.date||"9")<(b.date||"9")?-1:1);
+  return`${S.hideTips?"":`<div class="tips"><div class="grow"><h3>How TaskTie works</h3><ol>
+     <li><b>Create a wedding</b> and add its vendors. Their typical tasks load automatically.</li>
+     <li><b>Email each vendor</b> their checklist link and tick "Emailed." They confirm what they'll handle.</li>
+     <li><b>Fix the flags</b> (no owner, two owners, time conflicts) and print your day-of timeline.</li></ol></div>
+     <button class="x" title="Hide tips" onclick="S.hideTips=true;render()">×</button></div>`}
+  <div class="head"><h1 class="serif" style="font-size:34px">Your weddings</h1>
+   <div class="row" style="flex:none"><button class="btn ghost" onclick="demo()">Load demo weddings</button></div></div>
+  <div class="card"><h3>New wedding</h3><div class="row">
+   <div style="flex:2"><label for="nn">Couple</label><input id="nn" placeholder="e.g., Avery & Jordan"></div>
+   <div><label for="nd">Date</label><input id="nd" type="date"></div>
+   <button class="btn" onclick="if(nn.value.trim()){const w=newWedding(nn.value.trim(),nd.value);openW(w.id);toast('Wedding created. Add vendors next.')}">Create wedding</button></div></div>
+  <div class="grid">${ws.map(w=>{const s=stats(w),d=daysTo(w.date);return`<div class="wcard" onclick="openW('${w.id}')">
+    <div class="head"><h2 class="serif" style="font-size:22px">${esc(w.name)}</h2>${s.nf?`<span class="chip no">${s.nf} flag${s.nf>1?"s":""}</span>`:w.tasks.length?`<span class="chip ok">✓ No flags</span>`:""}</div>
+    <div class="sub">${dateStr(w.date)}${d!==null?` · ${d>=0?d+" days to go":"past"}`:""}</div>
+    <div class="prog"><i style="width:${s.total?Math.round(s.confirmed/s.total*100):0}%"></i></div>
+    <div class="sub">${s.confirmed}/${s.total} vendor tasks confirmed · ${s.emailed}/${w.vendors.length} vendors emailed</div></div>`;}).join("")||`<div class="card empty">No weddings yet. Create one above, or load the demo.</div>`}</div>`;
+}
+
+// ----- wedding views -----
+const V={
+overview(w,s){
+  const steps=[["Vendors added",w.vendors.length>0],["Vendors emailed",w.vendors.length&&s.emailed===w.vendors.length],["Vendors confirmed",s.total&&s.waitingV===0],["Flags fixed",w.tasks.length&&s.nf===0]];
+  const cur=steps.findIndex(x=>!x[1]);
+  const NEXT=[
+    ["Add your vendors","Each vendor's typical tasks load automatically.","Add vendors","vendors"],
+    [`Email ${w.vendors.length-s.emailed} vendor${w.vendors.length-s.emailed===1?"":"s"} their checklist`,"Copy each vendor's email and link on the Vendors tab, then tick “Emailed.”","Go to vendors","vendors"],
+    [`Waiting on ${s.waitingV} vendor${s.waitingV===1?"":"s"} to confirm`,s.recheck?`${s.recheck} task(s) changed and need re-confirming.`:"Open a vendor's checklist link to see what they see.","See vendors","vendors"],
+    [`Fix ${s.nf} flag${s.nf===1?"":"s"}`,"Tasks with no owner, two owners, or a time conflict.","Fix flags","tasks"],
+  ][cur]||["You're ready for the wedding day 🎉","Every task has one confirmed owner and no conflicts.","Open timeline","timeline"];
+  const d=daysTo(w.date),F=s.F,flagged=w.tasks.filter(t=>F[t.id]).slice(0,4);
+  const nextTasks=[...w.tasks].sort((a,b)=>toMin(a.time)-toMin(b.time)).slice(0,6);
+  return`<div class="next"><div class="sub">NEXT STEP</div><h2 class="serif">${NEXT[0]}</h2><div class="sub" style="margin-bottom:12px">${NEXT[1]}</div>
+    <button class="btn" onclick="go('${NEXT[3]}')">${NEXT[2]} →</button>
+    <div class="steps">${steps.map((x,i)=>`<span class="${x[1]?"done":i===cur?"cur":""}">${x[1]?"✓ ":""}${i+1}. ${x[0]}</span>`).join("")}</div></div>
+  <div class="stats">
+    <div class="stat" onclick="go('details')"><span class="sub">Wedding day</span><b>${d===null?"—":d>=0?d:"Past"}</b><span class="sub">${d!==null&&d>=0?"days to go":"set a date"}</span></div>
+    <div class="stat" onclick="go('vendors')"><span class="sub">Vendors emailed</span><b>${s.emailed}/${w.vendors.length}</b></div>
+    <div class="stat" onclick="go('vendors')"><span class="sub">Tasks confirmed</span><b>${s.confirmed}/${s.total}</b></div>
+    <div class="stat ${s.nf?"alert":""}" onclick="go('tasks')"><span class="sub" style="color:${s.nf?"var(--coral)":"var(--sage2)"}">Open flags</span><b>${s.nf}</b></div></div>
+  <div class="g2"><div>
+    ${checkpoints(w,s)}
+    <div class="card"><div class="head"><h2>Open flags</h2><button class="btn sm ghost" onclick="go('tasks')">All tasks</button></div>
+      ${flagged.length?`<div class="list">${flagged.map(t=>flagRow(w,t,F[t.id])).join("")}</div>${s.nf>4?`<p class="sub" style="margin-top:8px">+${s.nf-4} more on Tasks & flags</p>`:""}`:`<p class="sub">✓ Nothing to fix right now.</p>`}</div>
+    <div class="card"><div class="head"><h2>Timeline preview</h2><button class="btn sm ghost" onclick="go('timeline')">Full timeline</button></div>
+      ${nextTasks.length?`<div class="list">${nextTasks.map(t=>`<div><span class="tm" style="width:90px">${fmt(toMin(t.time))}</span><div class="grow"><b>${esc(t.name)}</b></div>${ownerChips(w,t)||`<span class="chip no">No owner</span>`}</div>`).join("")}</div>`:`<p class="sub">Add vendors to build the timeline.</p>`}</div>
+  </div><div>
+    ${checkins(w)}
+    <div class="card"><div class="head"><h2>Vendors</h2><button class="btn sm ghost" onclick="go('vendors')">Manage</button></div>
+      ${w.vendors.length?`<div class="list">${w.vendors.map(v=>{const mine=w.tasks.filter(t=>t.claims.some(c=>c.v===v.id)),ok=mine.filter(t=>t.claims.find(c=>c.v===v.id).st==="confirmed").length;return`<div><input type="checkbox" title="Emailed" aria-label="Emailed ${esc(v.name)}" ${v.emailed?"checked":""} onchange="setEmailed('${v.id}',this.checked)"><div class="grow"><b>${esc(v.name)}</b><div class="sub">${v.emailed?"Emailed":"Not emailed yet"} · ${ok}/${mine.length} confirmed${v.arrival?" · arrives "+fmt(toMin(v.arrival)):""}</div></div></div>`;}).join("")}</div>`:`<p class="sub">No vendors yet.</p><button class="btn sm" onclick="go('vendors')">Add vendors</button>`}</div>
+    <div class="card"><div class="head"><h2>Details</h2><button class="btn sm ghost" onclick="go('details')">Edit</button></div>
+      <div class="checks" style="gap:8px">${Object.keys(DETAILS).filter(k=>w.details[k]).map(k=>`<span class="chip wait">${DETAILS[k]}</span>`).join("")||`<span class="sub">No details added. Details unlock task suggestions.</span>`}</div>
+      <p class="sub" style="margin-top:10px">${w.tasks.filter(t=>t.custom).length} unique task(s) for this wedding</p></div>
+  </div></div>`;
+},
+vendors(w,s){
+  return`<div class="card"><h2>Add a vendor</h2><p class="hint">Their typical tasks load automatically as “awaiting” until the vendor confirms.</p>
+    <div class="row"><div><label for="vt">Type</label><select id="vt">${Object.keys(LIB).map(k=>`<option>${k}</option>`).join("")}</select></div>
+    <div><label for="vn">Business name</label><input id="vn" placeholder="optional"></div>
+    <div><label for="ve">Email</label><input id="ve" type="email" placeholder="optional"></div>
+    <button class="btn" onclick="addVendor(W(),vt.value,vn.value.trim(),ve.value.trim());toast(vt.value+' added with its typical tasks');render()">Add vendor</button></div></div>
+  <div class="card"><div class="head"><h2>Vendors (${w.vendors.length})</h2><span class="sub">${s.emailed}/${w.vendors.length} emailed</span></div>
+    <p class="hint">Tick <b>Emailed</b> once you've sent a vendor their checklist. Log each email or call to keep a steady weekly rhythm. After a call, TaskTie reminds you to send a follow-up email.</p>
+    ${w.vendors.length?`<div class="list">${w.vendors.map(v=>{const mine=w.tasks.filter(t=>t.claims.some(c=>c.v===v.id)),ok=mine.filter(t=>t.claims.find(c=>c.v===v.id).st==="confirmed").length,re=mine.filter(t=>t.claims.find(c=>c.v===v.id).st==="recheck").length;
+      return`<div><label style="display:flex;gap:8px;align-items:center;font-weight:500;margin:0;flex:none"><input type="checkbox" ${v.emailed?"checked":""} onchange="setEmailed('${v.id}',this.checked)">Emailed</label>
+      <div class="grow"><b>${esc(v.name)}</b> <span class="sub">${v.name!==v.type?v.type:""}${v.email?" · "+esc(v.email):""}</span>
+      <div class="sub">${mine.length} tasks · ${ok} confirmed${re?` · <span style="color:var(--amberT)">${re} need re-confirm</span>`:""}</div></div>
+      <span class="chip ${ok===mine.length&&mine.length?"ok":v.emailed?"wait":"no"}">${ok===mine.length&&mine.length?"✓ Confirmed":v.emailed?"Waiting on vendor":"Not emailed"}</span>
+      <button class="btn sm ghost" onclick="copyEmail('${v.id}')">Copy email</button>
+      <a class="btn sm ghost" href="#v/${w.id}/${v.id}" target="_blank">Open checklist</a>
+      <button class="x" title="Remove vendor" onclick="rmVendor('${v.id}')">×</button>
+      <div class="vmeta" style="align-items:end"><div><label>Last contact</label><div class="sub" style="padding:.4rem 0">${v.lastContact?sd(v.lastContact)+" ("+(v.log&&v.log.length?v.log[v.log.length-1].t:"email")+")":"Not yet"}</div></div>
+       <div><label for="nc${v.id}">Next check-in</label><input id="nc${v.id}" type="date" value="${v.nextCheck||""}" onchange="setV('${v.id}','nextCheck',this.value);render()"></div>
+       <div style="display:flex;gap:.4rem;flex-wrap:wrap;align-items:center">${v.followUp?`<span class="chip two">Follow-up email due</span><button class="btn sm" onclick="copyEmail('${v.id}','followup')">Copy follow-up</button>`:`<button class="btn sm ghost" onclick="logContact('${v.id}','email')">Log email</button><button class="btn sm ghost" onclick="logContact('${v.id}','call')">Log call</button>`}</div></div>
+      <div class="vmeta">${[["contact","Day-of contact","text"],["phone","Phone","tel"],["arrival","Arrival time","time"],["loadout","Load-out by","time"]].map(([k,l,ty])=>`<div><label for="${k}${v.id}">${l}</label><input id="${k}${v.id}" type="${ty}" value="${esc(v[k]||"")}" onchange="setV('${v.id}','${k}',this.value)"></div>`).join("")}</div></div>`;}).join("")}</div>`:`<p class="empty">No vendors yet. Add your first one above.</p>`}</div>`;
+},
+tasks(w,s){
+  const F=s.F,ord=t=>F[t.id]?0:1,list=[...w.tasks].sort((a,b)=>ord(a)-ord(b)||toMin(a.time)-toMin(b.time));
+  const by=k=>Object.values(F).filter(x=>x.k===k).length;
+  return`<div class="stats">
+   <div class="stat"><span class="sub">Tasks</span><b>${w.tasks.length}</b></div>
+   <div class="stat"><span class="sub" style="color:var(--coral)">No owner</span><b>${by("no")}</b></div>
+   <div class="stat"><span class="sub" style="color:var(--amberT)">Two owners</span><b>${by("two")}</b></div>
+   <div class="stat"><span class="sub" style="color:var(--amberT)">Time conflicts</span><b>${by("cf")}</b></div></div>
+  <div class="card"><h2>Tasks & flags</h2><p class="hint">${s.nf?"Flags are listed first. Pick one owner, or move a conflicting task with one click.":"✓ Every task has exactly one owner and no time conflicts."}</p>
+   ${w.tasks.length?`<div class="list">${list.map(t=>F[t.id]?flagRow(w,t,F[t.id]):`<div><div class="grow"><b>${esc(t.name)}</b><div class="sub">${fmt(toMin(t.time))} · ${t.dur} min${t.sec?" · "+esc(t.sec):""}</div>${t.note?`<div class="note">${esc(t.note)}</div>`:""}</div>${ownerChips(w,t)}
+     <select style="width:auto" aria-label="Change owner" onchange="if(this.value)assign('${t.id}',this.value)"><option value="">Change owner…</option>${ownerOpts(w,t)}</select></div>`).join("")}</div>`:`<p class="empty">No tasks yet. Add vendors to load their tasks.</p>`}</div>`;
+},
+timeline(w,s){
+  const F=s.F,list=[...w.tasks].sort((a,b)=>toMin(a.time)-toMin(b.time));
+  const owners=[{id:PLANNER},...w.vendors];
+  return`<div class="card"><div class="head"><h2>Day-of timeline</h2><button class="btn ghost" onclick="print()">Print run sheet</button></div>
+   <p class="hint">Change a time or length and everything re-sorts, re-checks for conflicts, and asks that vendor to re-confirm. ${s.nf?`<b style="color:var(--coral)">${s.nf} flag(s) still open.</b>`:"<b style='color:var(--sage2)'>✓ No flags.</b>"}</p>
+   <div class="tl sub" style="font-weight:600"><span>Start</span><span>Min</span><span>Task · owner</span><span></span></div>
+   ${list.map(t=>{const f=F[t.id];return`<div class="tl"><input type="time" value="${t.time}" aria-label="Start time" onchange="upd('${t.id}','time',this.value)"><input type="number" min="5" step="5" value="${t.dur}" aria-label="Minutes" onchange="upd('${t.id}','dur',+this.value)">
+    <div><span class="tm">${fmt(toMin(t.time))}–${fmt(toMin(t.time)+t.dur)}</span> · <b>${esc(t.name)}</b><div style="margin-top:4px">${ownerChips(w,t)}</div></div>
+    <span class="chip ${f?FL[f.k][0]:"ok"}">${f?FL[f.k][1]:"✓"}</span></div>`;}).join("")||`<p class="empty">No tasks yet.</p>`}</div>
+   <div class="print-only"><h1 class="serif">${esc(w.name)}: run sheet</h1><p>${dateStr(w.date)}</p>
+    ${owners.map(o=>{const ts=list.filter(t=>t.claims.some(c=>c.v===o.id));return ts.length?`<h2>${esc(vName(w,o.id))}</h2>${o.id!==PLANNER&&(o.contact||o.phone||o.arrival)?`<div class="sub">${[o.contact,o.phone,o.arrival&&"Arrives "+fmt(toMin(o.arrival)),o.loadout&&"Load-out by "+fmt(toMin(o.loadout))].filter(Boolean).map(esc).join(" · ")}</div>`:""}<ul>${ts.map(t=>`<li><b>${fmt(toMin(t.time))}</b> (${t.dur} min): ${esc(t.name)}</li>`).join("")}</ul>`:"";}).join("")}
+    ${list.some(t=>!t.claims.length)?`<h2>Unassigned</h2><ul>${list.filter(t=>!t.claims.length).map(t=>`<li>${fmt(toMin(t.time))}: ${esc(t.name)}</li>`).join("")}</ul>`:""}</div>`;
+},
+details(w){
+  const sug=Object.keys(w.details).filter(k=>w.details[k]).flatMap(k=>SUGG[k].map(x=>[...x,k])).filter(x=>!w.tasks.some(t=>t.name===x[0]));
+  const uniq=w.tasks.filter(t=>t.custom);
+  return`<div class="grid"><div class="card"><h2>Wedding</h2><p class="hint">Changes here update the whole wedding.</p>
+    <div class="row" style="margin-bottom:14px"><div><label for="wn">Couple</label><input id="wn" value="${esc(w.name)}" onchange="W().name=this.value;render()"></div>
+    <div><label for="wd">Date</label><input id="wd" type="date" value="${w.date||""}" onchange="W().date=this.value;render()"></div></div>
+    <label>Wedding details</label><p class="hint" style="margin-bottom:8px">These unlock suggestions for tasks you might not think of.</p>
+    <div class="checks">${Object.entries(DETAILS).map(([k,l])=>`<label><input type="checkbox" ${w.details[k]?"checked":""} onchange="W().details['${k}']=this.checked;render()">${l}</label>`).join("")}</div></div>
+   <div class="card"><h2>Unique tasks (${uniq.length})</h2><p class="hint">Tasks specific to this wedding.</p>
+    ${sug.map(x=>`<div class="sugg"><div class="grow"><b>${esc(x[0])}</b> <span class="sub">Suggested · ${DETAILS[x[4]]} · ${fmt(toMin(x[1]))}</span></div><button class="btn sm" onclick="addSugg('${x[4]}',${SUGG[x[4]].findIndex(y=>y[0]===x[0])})">+ Add</button></div>`).join("")}
+    <div class="list">${uniq.map(t=>`<div><div class="grow"><b>${esc(t.name)}</b> <span class="sub">${fmt(toMin(t.time))} · ${t.dur} min</span></div>${ownerChips(w,t)||`<span class="chip no">No owner</span>`}<button class="x" title="Remove task" onclick="rmTask('${t.id}')">×</button></div>`).join("")}</div>
+    <div class="row" style="margin-top:12px"><div style="flex:3"><label for="cn">Add a custom task</label><input id="cn" placeholder="e.g., Hand out welcome bags"></div>
+    <div><label for="ct">Time</label><input id="ct" type="time" value="16:00"></div><div><label for="cd">Minutes</label><input id="cd" type="number" value="15" min="5" step="5"></div>
+    <button class="btn" onclick="if(cn.value.trim()){addTask(W(),cn.value.trim(),ct.value,cd.value,0,1);toast('Task added. Assign an owner on Tasks & flags.');render()}">Add</button></div></div></div>
+  <div class="card"><h2>Lessons learned</h2><p class="hint">After the wedding, note what was missed so it doesn't happen again.</p>
+    <label for="ls">What was missed or doubled up?</label><textarea id="ls" rows="3" onchange="W().lessons=this.value;save();toast('Saved')">${esc(w.lessons||"")}</textarea>
+    <div class="row" style="margin-top:12px"><div style="flex:3"><label for="mg">Add a task to every future wedding</label><input id="mg" placeholder="e.g., Bring an emergency sewing kit"></div>
+    <div><label for="mgt">Time</label><input id="mgt" type="time" value="16:00"></div>
+    <button class="btn" onclick="if(mg.value.trim()){(S.myGaps=S.myGaps||[]).push([mg.value.trim(),mgt.value,15]);toast('Added to every new wedding');render()}">Add</button></div>
+    ${(S.myGaps||[]).length?`<div class="list" style="margin-top:8px">${S.myGaps.map((g,i)=>`<div><div class="grow"><b>${esc(g[0])}</b> <span class="sub">${fmt(toMin(g[1]))} · every new wedding</span></div><button class="x" title="Remove" onclick="S.myGaps.splice(${i},1);render()">×</button></div>`).join("")}</div>`:""}</div>
+  <div class="card"><h3>Delete wedding</h3><p class="hint">Removes this wedding and all of its vendors and tasks.</p><button class="btn danger" onclick="delWedding()">Delete ${esc(w.name)}</button></div>`;
+},
+};
+function checkpoints(w,s){
+  const n=w.vendors.length;
+  const CP=[[56,"All vendors emailed their checklist",n>0&&s.emailed===n],[28,"All vendors confirmed their tasks",s.total>0&&s.waitingV===0],[14,"All flags fixed",w.tasks.length>0&&s.nf===0],[7,"Final timeline printed and sent to vendors",!!w.finalSent,1]];
+  const d=daysTo(w.date);
+  return`<div class="card"><div class="head"><h2>Checkpoints</h2><span class="sub">${w.date?"Before "+sd(w.date):"Set a date to see due dates"}</span></div>
+   <p class="hint">Check in at each milestone so gaps surface early, not on the wedding day.</p>
+   <div class="list">${CP.map(([wk,l,done,manual])=>{const due=w.date?addDays(w.date,-wk):null,late=!done&&d!==null&&d<=wk;
+     return`<div>${manual?`<input type="checkbox" aria-label="${l}" ${done?"checked":""} onchange="W().finalSent=this.checked;render()">`:`<span style="width:1.25rem;text-align:center;font-weight:700;color:${done?"var(--oliveT)":"var(--muted)"}">${done?"✓":"○"}</span>`}
+     <div class="grow"><b>${l}</b><div class="sub">${wk/7} week${wk>7?"s":""} before${due?" · "+sd(due):""}</div></div>
+     <span class="chip ${done?"ok":late?"no":"wait"}">${done?"✓ Done":late?"Overdue":"Upcoming"}</span></div>`;}).join("")}</div></div>`;
+}
+function checkins(w){
+  const due=w.vendors.filter(isDue);
+  return`<div class="card"><div class="head"><h2>Check-ins due</h2><span class="sub">Weekly rhythm</span></div>
+   ${due.length?`<div class="list">${due.map(v=>`<div><div class="grow"><b>${esc(v.name)}</b><div class="sub">${v.followUp?"Follow-up email due after your call":"Check-in due "+sd(v.nextCheck)} · last contact ${sd(v.lastContact)}</div></div>
+     ${v.followUp?`<button class="btn sm" onclick="copyEmail('${v.id}','followup')">Copy follow-up</button>`:`<button class="btn sm ghost" onclick="logContact('${v.id}','email')">Log email</button><button class="btn sm ghost" onclick="logContact('${v.id}','call')">Log call</button>`}</div>`).join("")}</div>`:`<p class="sub">✓ You're caught up with every vendor.</p>`}</div>`;
+}
+function ownerOpts(w,t){return[{id:PLANNER,name:"You (planner)"},...w.vendors].map(v=>`<option value="${v.id}">${esc(v.name)}${t.claims.some(c=>c.v===v.id)?" (claimed)":""}</option>`).join("");}
+function flagRow(w,t,f){
+  return`<div class="flagrow"><div class="grow"><b>${esc(t.name)}</b><div class="sub">${fmt(toMin(t.time))} · ${t.dur} min${t.sec?" · "+esc(t.sec):""}${f.k==="cf"?` · overlaps “${esc(f.o.name)}” (${fmt(toMin(f.o.time))})`:""}</div>${t.note?`<div class="note">${esc(t.note)}</div>`:""}<div style="margin-top:4px">${ownerChips(w,t)}</div></div>
+   ${f.k==="cf"?`<button class="btn sm" onclick="moveAfter('${t.id}','${f.o.id}')">Move to ${fmt(toMin(f.o.time)+f.o.dur)}</button>`:
+     `<select style="width:auto" aria-label="Assign owner" onchange="if(this.value)assign('${t.id}',this.value)"><option value="">Assign one owner…</option>${ownerOpts(w,t)}</select>`}
+   <span class="chip ${FL[f.k][0]}">${FL[f.k][1]}</span></div>`;
+}
+
+// ----- vendor checklist page (what the vendor sees from their link) -----
+function renderVendor(){
+  load();const [,wid,vid]=location.hash.split("/");const w=S.weddings.find(x=>x.id===wid),v=w&&w.vendors.find(x=>x.id===vid);
+  document.getElementById("hdr").innerHTML=`<div class="bar"><div class="logo"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="brand serif">TaskTie</div><div class="crumb">Vendor checklist</div><div class="spacer"></div>${fsCtl()}</div>`;
+  if(!v){document.getElementById("main").innerHTML=`<div class="card empty">This checklist link isn't valid anymore.</div>`;return;}
+  const mine=w.tasks.filter(t=>t.claims.some(c=>c.v===vid)).sort((a,b)=>SECS.indexOf(a.sec)-SECS.indexOf(b.sec)||toMin(a.time)-toMin(b.time));
+  const open=w.tasks.filter(t=>!t.claims.length).sort((a,b)=>toMin(a.time)-toMin(b.time));
+  const st=t=>t.claims.find(c=>c.v===vid).st;
+  document.getElementById("main").innerHTML=`<div class="next"><div class="sub">CHECKLIST FOR ${esc(v.name).toUpperCase()}</div><h2 class="serif">${esc(w.name)}</h2><div class="sub">${dateStr(w.date)}. Please confirm the tasks you'll handle on the wedding day.</div></div>
+   <div class="card"><div class="head"><h2>Your tasks (${mine.length})</h2>${mine.some(t=>st(t)!=="confirmed")?`<button class="btn" onclick="vAct('${wid}','${vid}','all')">Confirm all</button>`:`<span class="chip ok">✓ All confirmed</span>`}</div>
+    <div class="list">${mine.map((t,i)=>`${t.sec&&t.sec!==(mine[i-1]||{}).sec?`<p class="sec" style="border:0;padding:0">${esc(t.sec)}</p>`:""}<div><div class="grow"><b>${esc(t.name)}</b><div class="sub">${fmt(toMin(t.time))}–${fmt(toMin(t.time)+t.dur)}${st(t)==="recheck"?` · <b style="color:var(--amberT)">Time changed. Please re-confirm.</b>`:""}</div>${t.note?`<div class="note">${esc(t.note)}</div>`:""}</div>
+     ${st(t)==="confirmed"?`<span class="chip ok">✓ Confirmed</span>`:`<button class="btn sm" onclick="vAct('${wid}','${vid}','yes','${t.id}')">Confirm</button>`}
+     <button class="btn sm ghost" onclick="vAct('${wid}','${vid}','no','${t.id}')">Not mine</button></div>`).join("")||`<p class="sub">No tasks yet.</p>`}</div></div>
+   ${open.length?`<div class="card"><h2>Anything else you'll handle?</h2><p class="hint">These tasks don't have an owner yet.</p><div class="list">${open.map(t=>`<div><div class="grow"><b>${esc(t.name)}</b><div class="sub">${fmt(toMin(t.time))}</div></div><button class="btn sm ghost" onclick="vAct('${wid}','${vid}','take','${t.id}')">I'll do this</button></div>`).join("")}</div></div>`:""}
+   <p class="sub" style="text-align:center">Demo: vendor answers are saved in this browser and show up in the planner's view.</p>`;
+}
+function vAct(wid,vid,a,tid){
+  load();const w=S.weddings.find(x=>x.id===wid),v=w.vendors.find(x=>x.id===vid);v.responded=true;
+  const ts=a==="all"?w.tasks.filter(t=>t.claims.some(c=>c.v===vid)):[w.tasks.find(t=>t.id===tid)];
+  ts.forEach(t=>{if(a==="no")t.claims=t.claims.filter(c=>c.v!==vid);else if(a==="take")t.claims.push({v:vid,st:"confirmed"});else t.claims.find(c=>c.v===vid).st="confirmed";});
+  save();renderVendor();toast(a==="no"?"Removed. Your planner will see it's unassigned.":"Thanks! Your planner can see this.");
+}
+
+// ===== actions =====
+function setV(vid,k,val){W().vendors.find(v=>v.id===vid)[k]=val;save();}
+function setEmailed(vid,on){const v=W().vendors.find(v=>v.id===vid);v.emailed=on;if(on&&!v.lastContact){v.lastContact=today();v.nextCheck=addDays(today(),7);(v.log=v.log||[]).push({d:today(),t:"email"});}render();if(on)toast(v.name+" marked as emailed. Next check-in in 1 week.");}
+function logContact(vid,t){const v=W().vendors.find(v=>v.id===vid);v.lastContact=today();v.nextCheck=addDays(today(),7);(v.log=v.log||[]).push({d:today(),t});v.followUp=t==="call";
+  render();if(t==="call")toast("Call logged. Send a follow-up email.","Copy follow-up",()=>copyEmail(vid,"followup"));else toast("Email logged. Next check-in "+sd(v.nextCheck)+".");}
+function assign(tid,vid){const t=W().tasks.find(t=>t.id===tid);t.claims=[{v:vid,st:vid===PLANNER?"confirmed":(t.claims.find(c=>c.v===vid)||{}).st||"expected"}];toast("Owner set to "+vName(W(),vid)+". Timeline updated.");render();}
+function upd(tid,k,v){const t=W().tasks.find(t=>t.id===tid);t[k]=v;if(k==="dur")S.learned[t.name]=v;t.claims.forEach(c=>{if(c.v!==PLANNER&&c.st==="confirmed")c.st="recheck";});render();}
+function moveAfter(tid,oid){const w=W(),o=w.tasks.find(t=>t.id===oid);upd(tid,"time",toHM(toMin(o.time)+o.dur));toast("Moved. That vendor will be asked to re-confirm.");}
+function addSugg(k,i){const x=SUGG[k][i];addTask(W(),x[0],x[1],x[2],x[3],1);toast("Added. Assign an owner on Tasks & flags.");render();}
+function rmTask(tid){const w=W();w.tasks=w.tasks.filter(t=>t.id!==tid);render();}
+let undo=null;
+function rmVendor(vid){
+  const w=W(),v=w.vendors.find(v=>v.id===vid);if(!confirm(`Remove ${v.name}? Their tasks will lose this owner.`))return;
+  undo={w:w.id,v,i:w.vendors.indexOf(v),claims:w.tasks.map(t=>[t.id,t.claims.find(c=>c.v===vid)]).filter(x=>x[1])};
+  w.vendors=w.vendors.filter(x=>x.id!==vid);w.tasks.forEach(t=>t.claims=t.claims.filter(c=>c.v!==vid));render();
+  toast(v.name+" removed","Undo",()=>{const w=S.weddings.find(x=>x.id===undo.w);w.vendors.splice(undo.i,0,undo.v);undo.claims.forEach(([tid,c])=>{const t=w.tasks.find(t=>t.id===tid);if(t)t.claims.push(c);});render();});
+}
+function delWedding(){const w=W();if(!confirm(`Delete ${w.name}? This can't be undone.`))return;S.weddings=S.weddings.filter(x=>x.id!==w.id);home();}
+function copyEmail(vid,kind){
+  const w=W(),v=w.vendors.find(v=>v.id===vid);
+  const txt=kind==="followup"
+    ?`Hi ${v.name},\n\nThank you for taking the time to talk today! Here's a quick recap of what we covered for ${w.name}'s wedding on ${dateStr(w.date)}:\n- \n- \n\nYour checklist is here if you'd like to confirm anything we discussed:\n${vLink(w,v)}\n\nThanks again, I really appreciate you!`
+    :`Hi ${v.name},\n\nI hope your week is going well! I'm so glad you're part of ${w.name}'s wedding on ${dateStr(w.date)}.\n\nTo keep the day running smoothly, I've put together a short checklist of day-of tasks. When you have a moment, could you confirm the ones you'll be handling? It only takes a couple of minutes:\n${vLink(w,v)}\n\nIf it's easier to talk through the details, I'm happy to set up a quick call.\n\nThank you so much!`;
+  if(kind==="followup"){v.followUp=false;save();setTimeout(render,50);}
+  const done=()=>toast("Email copied. Paste it into your email app, then tick “Emailed.”");
+  try{navigator.clipboard.writeText(txt).then(done,()=>{prompt("Copy this email:",txt);});}catch(e){prompt("Copy this email:",txt);}
+}
+let tt;function toast(m,label,fn){const e=document.getElementById("toast");e.innerHTML=esc(m)+(label?`<button id="tb">${label}</button>`:"");if(fn)document.getElementById("tb").onclick=()=>{fn();e.classList.remove("on");};e.classList.add("on");clearTimeout(tt);tt=setTimeout(()=>e.classList.remove("on"),label?5000:2000);}
+function demo(){
+  const a=newWedding("Avery & Jordan","2027-06-14");a.details={outdoor:true};
+  ["Caterer","Venue coordinator","DJ / band","Photographer","Officiant","Florist","Bar service"].forEach(t=>addVendor(a,t));
+  const cat=a.vendors.find(v=>v.type==="Caterer");cat.contact="Maria Lopez";cat.arrival="13:00";cat.loadout="23:59";
+  // planner takes most gap tasks; two are left unassigned
+  a.tasks.filter(t=>t.gap&&!/cards and gifts|line up for the processional/.test(t.name)).forEach(t=>t.claims=[{v:PLANNER,st:"confirmed"}]);
+  // the real-world mix-up: license signing overlaps formals
+  a.tasks.find(t=>t.name.startsWith("Sign the marriage license")).time="17:45";
+  a.vendors.slice(0,5).forEach((v,i)=>{v.emailed=true;v.lastContact=addDays(today(),-(i+2));v.nextCheck=addDays(v.lastContact,7);v.log=[{d:v.lastContact,t:"email"}];});
+  const cat2=a.vendors[0];cat2.lastContact=today();cat2.log.push({d:today(),t:"call"});cat2.followUp=true;
+  a.vendors[1].nextCheck=addDays(today(),-1);
+  a.tasks.forEach(t=>t.claims.forEach(c=>{const v=a.vendors.find(v=>v.id===c.v);if(v&&["DJ / band","Officiant"].includes(v.type))c.st="confirmed";}));
+  const b=newWedding("Sam & Riley","2027-09-04");b.details={sparklers:true};
+  ["Caterer","Photographer","Officiant","Bakery"].forEach(t=>addVendor(b,t));
+  b.tasks.filter(t=>t.gap).forEach(t=>t.claims=[{v:PLANNER,st:"confirmed"}]);
+  b.vendors.forEach(v=>{v.emailed=true;v.responded=true;});b.tasks.forEach(t=>t.claims.forEach(c=>c.st="confirmed"));
+  render();toast("2 demo weddings loaded");
+}
+applyFs();
+addEventListener("hashchange",render);
+addEventListener("storage",()=>{load();render();});
+render();
+</script>
+</body>
+</html>
