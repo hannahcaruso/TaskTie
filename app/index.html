@@ -97,6 +97,11 @@ input[type=checkbox]{width:1.25rem;height:1.25rem;accent-color:var(--primary);fl
 .toast{position:fixed;left:50%;bottom:1.5rem;transform:translateX(-50%);background:var(--ink);color:#fff;padding:.75rem 1.1rem;border-radius:.75rem;font-weight:600;opacity:0;transition:.25s;pointer-events:none;display:flex;gap:.9rem;align-items:center;z-index:9;max-width:92vw}
 .toast.on{opacity:1;pointer-events:auto}
 .toast button{background:none;border:1px solid #fff;color:#fff;border-radius:.5rem;padding:.25rem .65rem;font:600 .8rem Inter;cursor:pointer}
+.guide{display:flex;gap:.8rem;align-items:center;background:var(--tanBg);border:1px solid var(--tan);border-radius:1rem;padding:.8rem 1rem;margin-bottom:1.15rem;flex-wrap:wrap}
+.gstep{background:var(--primary);color:#fff;font-weight:700;border-radius:2rem;padding:.2rem .75rem;font-size:.8rem;white-space:nowrap}
+.vmore{width:100%;padding-left:2rem}
+.vmore summary{cursor:pointer;color:var(--primary);font-weight:600;font-size:.85rem;padding:.2rem 0}
+.vmore .vmeta{padding-left:0;margin-top:.5rem}
 .print-only{display:none}
 @media(max-width:640px){.tl{grid-template-columns:5.2rem 4rem 1fr}.tl .chip{grid-column:3;justify-self:start}.vmeta{padding-left:0}}
 @media print{body *{visibility:hidden}.print-only,.print-only *{visibility:visible}.print-only{display:block;position:absolute;left:0;top:0;width:100%;padding:20px}
@@ -225,7 +230,7 @@ function render(){
     <div class="brand serif" onclick="home()">TaskTie</div>
     ${w?`<div class="crumb"><a href="javascript:home()">Weddings</a> / <b>${esc(w.name)}</b> · ${dateStr(w.date)}</div>`:`<div class="crumb">Your weddings</div>`}
     <div class="spacer"></div>${fsCtl()}</div>
-    ${w?`<nav>${[["overview","Overview"],["vendors","Vendors"],["tasks","Tasks & flags"],["timeline","Timeline"],["details","Wedding details"]].map(([k,l])=>`<button class="${S.tab===k?"on":""}" onclick="go('${k}')">${l}${k==="tasks"&&st.nf?`<span class="n">${st.nf}</span>`:""}${k==="vendors"&&w.vendors.length-st.emailed>0?`<span class="n" style="background:var(--amberBg);color:var(--amberT)">${w.vendors.length-st.emailed}</span>`:""}</button>`).join("")}</nav>`:""}`;
+    ${w?`<nav>${[["overview","Home"],["vendors","1. Vendors"],["tasks","2. Tasks & flags"],["timeline","3. Timeline"],["details","Settings"]].map(([k,l])=>`<button class="${S.tab===k?"on":""}" onclick="go('${k}')">${l}${k==="tasks"&&st.nf?`<span class="n">${st.nf}</span>`:""}${k==="vendors"&&w.vendors.length-st.emailed>0?`<span class="n" style="background:var(--amberBg);color:var(--amberT)">${w.vendors.length-st.emailed}</span>`:""}</button>`).join("")}</nav>`:""}`;
   document.getElementById("main").innerHTML=w?V[S.tab](w,st):dashboard();
   save();
 }
@@ -280,45 +285,41 @@ overview(w,s){
     <div class="stat" onclick="go('vendors')"><span class="sub">Tasks confirmed</span><b>${s.confirmed}/${s.total}</b></div>
     <div class="stat ${s.nf?"alert":""}" onclick="go('tasks')"><span class="sub" style="color:${s.nf?"var(--coral)":"var(--sage2)"}">Open flags</span><b>${s.nf}</b></div></div>
   <div class="g2"><div>
-    ${checkpoints(w,s)}
-    <div class="card"><div class="head"><h2>Open flags</h2><button class="btn sm ghost" onclick="go('tasks')">All tasks</button></div>
-      ${flagged.length?`<div class="list">${flagged.map(t=>flagRow(w,t,F[t.id])).join("")}</div>${s.nf>4?`<p class="sub" style="margin-top:8px">+${s.nf-4} more on Tasks & flags</p>`:""}`:`<p class="sub">✓ Nothing to fix right now.</p>`}</div>
-    <div class="card"><div class="head"><h2>Timeline preview</h2><button class="btn sm ghost" onclick="go('timeline')">Full timeline</button></div>
-      ${nextTasks.length?`<div class="list">${nextTasks.map(t=>`<div><span class="tm" style="width:90px">${fmt(toMin(t.time))}</span><div class="grow"><b>${esc(t.name)}</b></div>${ownerChips(w,t)||`<span class="chip no">No owner</span>`}</div>`).join("")}</div>`:`<p class="sub">Add vendors to build the timeline.</p>`}</div>
+    <div class="card"><div class="head"><h2>To do now</h2>${s.nf?`<button class="btn sm ghost" onclick="go('tasks')">See all ${s.nf}</button>`:""}</div>
+      ${flagged.length?`<p class="hint">Fix these flags right here, or open Tasks &amp; flags.</p><div class="list">${flagged.map(t=>flagRow(w,t,F[t.id])).join("")}</div>`:`<p class="sub">✓ No flags to fix right now.</p>`}</div>
   </div><div>
     ${checkins(w)}
-    <div class="card"><div class="head"><h2>Vendors</h2><button class="btn sm ghost" onclick="go('vendors')">Manage</button></div>
-      ${w.vendors.length?`<div class="list">${w.vendors.map(v=>{const mine=w.tasks.filter(t=>t.claims.some(c=>c.v===v.id)),ok=mine.filter(t=>t.claims.find(c=>c.v===v.id).st==="confirmed").length;return`<div><input type="checkbox" title="Emailed" aria-label="Emailed ${esc(v.name)}" ${v.emailed?"checked":""} onchange="setEmailed('${v.id}',this.checked)"><div class="grow"><b>${esc(v.name)}</b><div class="sub">${v.emailed?"Emailed":"Not emailed yet"} · ${ok}/${mine.length} confirmed${v.arrival?" · arrives "+fmt(toMin(v.arrival)):""}</div></div></div>`;}).join("")}</div>`:`<p class="sub">No vendors yet.</p><button class="btn sm" onclick="go('vendors')">Add vendors</button>`}</div>
-    <div class="card"><div class="head"><h2>Details</h2><button class="btn sm ghost" onclick="go('details')">Edit</button></div>
-      <div class="checks" style="gap:8px">${Object.keys(DETAILS).filter(k=>w.details[k]).map(k=>`<span class="chip wait">${DETAILS[k]}</span>`).join("")||`<span class="sub">No details added. Details unlock task suggestions.</span>`}</div>
-      <p class="sub" style="margin-top:10px">${w.tasks.filter(t=>t.custom).length} unique task(s) for this wedding</p></div>
+    ${checkpoints(w,s)}
   </div></div>`;
 },
 vendors(w,s){
-  return`<div class="card"><h2>Add a vendor</h2><p class="hint">Their typical tasks load automatically as “awaiting” until the vendor confirms.</p>
+  return`${guide("Step 1 of 3","<b>Add each vendor, then send them their checklist.</b> Click “Copy email,” paste it into your email, then tick “Emailed.”","tasks","Next: fix flags")}
+  <div class="card"><h2>Add a vendor</h2><p class="hint">Their typical tasks load automatically as “awaiting” until the vendor confirms.</p>
     <div class="row"><div><label for="vt">Type</label><select id="vt">${Object.keys(LIB).map(k=>`<option>${k}</option>`).join("")}</select></div>
     <div><label for="vn">Business name</label><input id="vn" placeholder="optional"></div>
     <div><label for="ve">Email</label><input id="ve" type="email" placeholder="optional"></div>
     <button class="btn" onclick="addVendor(W(),vt.value,vn.value.trim(),ve.value.trim());toast(vt.value+' added with its typical tasks');render()">Add vendor</button></div></div>
   <div class="card"><div class="head"><h2>Vendors (${w.vendors.length})</h2><span class="sub">${s.emailed}/${w.vendors.length} emailed</span></div>
-    <p class="hint">Tick <b>Emailed</b> once you've sent a vendor their checklist. Log each email or call to keep a steady weekly rhythm. After a call, TaskTie reminds you to send a follow-up email.</p>
+    <p class="hint">Open <b>Contact &amp; check-ins</b> under a vendor to log calls, set the next check-in, or add their day-of contact.</p>
     ${w.vendors.length?`<div class="list">${w.vendors.map(v=>{const mine=w.tasks.filter(t=>t.claims.some(c=>c.v===v.id)),ok=mine.filter(t=>t.claims.find(c=>c.v===v.id).st==="confirmed").length,re=mine.filter(t=>t.claims.find(c=>c.v===v.id).st==="recheck").length;
       return`<div><label style="display:flex;gap:8px;align-items:center;font-weight:500;margin:0;flex:none"><input type="checkbox" ${v.emailed?"checked":""} onchange="setEmailed('${v.id}',this.checked)">Emailed</label>
       <div class="grow"><b>${esc(v.name)}</b> <span class="sub">${v.name!==v.type?v.type:""}${v.email?" · "+esc(v.email):""}</span>
-      <div class="sub">${mine.length} tasks · ${ok} confirmed${re?` · <span style="color:var(--amberT)">${re} need re-confirm</span>`:""}</div></div>
+      <div class="sub">${v.followUp?`<b style="color:var(--amberT)">Follow-up email due</b> · `:""}${mine.length} tasks · ${ok} confirmed${re?` · <span style="color:var(--amberT)">${re} need re-confirm</span>`:""}</div></div>
       <span class="chip ${ok===mine.length&&mine.length?"ok":v.emailed?"wait":"no"}">${ok===mine.length&&mine.length?"✓ Confirmed":v.emailed?"Waiting on vendor":"Not emailed"}</span>
       <button class="btn sm ghost" onclick="copyEmail('${v.id}')">Copy email</button>
       <a class="btn sm ghost" href="#v/${w.id}/${v.id}" target="_blank">Open checklist</a>
       <button class="x" title="Remove vendor" onclick="rmVendor('${v.id}')">×</button>
+      <details class="vmore"><summary>Contact &amp; check-ins</summary>
       <div class="vmeta" style="align-items:end"><div><label>Last contact</label><div class="sub" style="padding:.4rem 0">${v.lastContact?sd(v.lastContact)+" ("+(v.log&&v.log.length?v.log[v.log.length-1].t:"email")+")":"Not yet"}</div></div>
        <div><label for="nc${v.id}">Next check-in</label><input id="nc${v.id}" type="date" value="${v.nextCheck||""}" onchange="setV('${v.id}','nextCheck',this.value);render()"></div>
        <div style="display:flex;gap:.4rem;flex-wrap:wrap;align-items:center">${v.followUp?`<span class="chip two">Follow-up email due</span><button class="btn sm" onclick="copyEmail('${v.id}','followup')">Copy follow-up</button>`:`<button class="btn sm ghost" onclick="logContact('${v.id}','email')">Log email</button><button class="btn sm ghost" onclick="logContact('${v.id}','call')">Log call</button>`}</div></div>
-      <div class="vmeta">${[["contact","Day-of contact","text"],["phone","Phone","tel"],["arrival","Arrival time","time"],["loadout","Load-out by","time"]].map(([k,l,ty])=>`<div><label for="${k}${v.id}">${l}</label><input id="${k}${v.id}" type="${ty}" value="${esc(v[k]||"")}" onchange="setV('${v.id}','${k}',this.value)"></div>`).join("")}</div></div>`;}).join("")}</div>`:`<p class="empty">No vendors yet. Add your first one above.</p>`}</div>`;
+      <div class="vmeta">${[["contact","Day-of contact","text"],["phone","Phone","tel"],["arrival","Arrival time","time"],["loadout","Load-out by","time"]].map(([k,l,ty])=>`<div><label for="${k}${v.id}">${l}</label><input id="${k}${v.id}" type="${ty}" value="${esc(v[k]||"")}" onchange="setV('${v.id}','${k}',this.value)"></div>`).join("")}</div></details></div>`;}).join("")}</div>`:`<p class="empty">No vendors yet. Add your first one above.</p>`}</div>`;
 },
 tasks(w,s){
   const F=s.F,ord=t=>F[t.id]?0:1,list=[...w.tasks].sort((a,b)=>ord(a)-ord(b)||toMin(a.time)-toMin(b.time));
   const by=k=>Object.values(F).filter(x=>x.k===k).length;
-  return`<div class="stats">
+  return`${guide("Step 2 of 3","<b>Fix anything flagged.</b> Pick one owner for each flagged task, or move a time conflict with one click.","timeline","Next: timeline")}
+  <div class="stats">
    <div class="stat"><span class="sub">Tasks</span><b>${w.tasks.length}</b></div>
    <div class="stat"><span class="sub" style="color:var(--coral)">No owner</span><b>${by("no")}</b></div>
    <div class="stat"><span class="sub" style="color:var(--amberT)">Two owners</span><b>${by("two")}</b></div>
@@ -330,7 +331,8 @@ tasks(w,s){
 timeline(w,s){
   const F=s.F,list=[...w.tasks].sort((a,b)=>toMin(a.time)-toMin(b.time));
   const owners=[{id:PLANNER},...w.vendors];
-  return`<div class="card"><div class="head"><h2>Day-of timeline</h2><button class="btn ghost" onclick="print()">Print run sheet</button></div>
+  return`${guide("Step 3 of 3","<b>Check the day-of timeline, then print it.</b> Change a time or length if something looks off.","overview","Back to Home")}
+  <div class="card"><div class="head"><h2>Day-of timeline</h2><button class="btn ghost" onclick="print()">Print run sheet</button></div>
    <p class="hint">Change a time or length and everything re-sorts, re-checks for conflicts, and asks that vendor to re-confirm. ${s.nf?`<b style="color:var(--coral)">${s.nf} flag(s) still open.</b>`:"<b style='color:var(--sage2)'>✓ No flags.</b>"}</p>
    <div class="tl sub" style="font-weight:600"><span>Start</span><span>Min</span><span>Task · owner</span><span></span></div>
    ${list.map(t=>{const f=F[t.id];return`<div class="tl"><input type="time" value="${t.time}" aria-label="Start time" onchange="upd('${t.id}','time',this.value)"><input type="number" min="5" step="5" value="${t.dur}" aria-label="Minutes" onchange="upd('${t.id}','dur',+this.value)">
@@ -343,7 +345,8 @@ timeline(w,s){
 details(w){
   const sug=Object.keys(w.details).filter(k=>w.details[k]).flatMap(k=>SUGG[k].map(x=>[...x,k])).filter(x=>!w.tasks.some(t=>t.name===x[0]));
   const uniq=w.tasks.filter(t=>t.custom);
-  return`<div class="grid"><div class="card"><h2>Wedding</h2><p class="hint">Changes here update the whole wedding.</p>
+  return`${guide("Settings","Edit the couple, date and details, add tasks unique to this wedding, and note lessons learned afterward.","overview","Back to Home")}
+  <div class="grid"><div class="card"><h2>Wedding</h2><p class="hint">Changes here update the whole wedding.</p>
     <div class="row" style="margin-bottom:14px"><div><label for="wn">Couple</label><input id="wn" value="${esc(w.name)}" onchange="W().name=this.value;render()"></div>
     <div><label for="wd">Date</label><input id="wd" type="date" value="${w.date||""}" onchange="W().date=this.value;render()"></div></div>
     <label>Wedding details</label><p class="hint" style="margin-bottom:8px">These unlock suggestions for tasks you might not think of.</p>
@@ -380,6 +383,7 @@ function checkins(w){
    ${due.length?`<div class="list">${due.map(v=>`<div><div class="grow"><b>${esc(v.name)}</b><div class="sub">${v.followUp?"Follow-up email due after your call":"Check-in due "+sd(v.nextCheck)} · last contact ${sd(v.lastContact)}</div></div>
      ${v.followUp?`<button class="btn sm" onclick="copyEmail('${v.id}','followup')">Copy follow-up</button>`:`<button class="btn sm ghost" onclick="logContact('${v.id}','email')">Log email</button><button class="btn sm ghost" onclick="logContact('${v.id}','call')">Log call</button>`}</div>`).join("")}</div>`:`<p class="sub">✓ You're caught up with every vendor.</p>`}</div>`;
 }
+function guide(step,text,next,label){return`<div class="guide"><span class="gstep">${step}</span><div class="grow">${text}</div>${next?`<button class="btn sm" onclick="go('${next}')">${label} →</button>`:""}</div>`;}
 function ownerOpts(w,t){return[{id:PLANNER,name:"You (planner)"},...w.vendors].map(v=>`<option value="${v.id}">${esc(v.name)}${t.claims.some(c=>c.v===v.id)?" (claimed)":""}</option>`).join("");}
 function flagRow(w,t,f){
   return`<div class="flagrow"><div class="grow"><b>${esc(t.name)}</b><div class="sub">${fmt(toMin(t.time))} · ${t.dur} min${t.sec?" · "+esc(t.sec):""}${f.k==="cf"?` · overlaps “${esc(f.o.name)}” (${fmt(toMin(f.o.time))})`:""}</div>${t.note?`<div class="note">${esc(t.note)}</div>`:""}<div style="margin-top:4px">${ownerChips(w,t)}</div></div>

@@ -36,7 +36,21 @@ What would tell me I am wrong: Planners say mix-ups happen "Rarely" or "Never," 
 **Result:** Not wrong. Both planners said mix-ups happen. Neither reported spending less than 15 minutes per vendor, although neither gave an exact number either.
 
 ## The app helps
-Who tests it: A classmate (test scheduled soon; results to be added here).
+Who tests it: A classmate, November 17.
 What they do: Read the web page, then set up one wedding with 3 vendors and resolve one flagged task. Give feedback.
 What I write down: Where they got stuck and how long it took.
 What would tell me I am wrong: They can't find or fix the flagged task, or setup takes longer than emailing the 3 vendors would.
+
+### Test results
+- **What they said:** The app felt "a little overwhelming." There were a lot of things to click into, and it was hard to tell where to go next.
+- **Not recorded:** exactly where they got stuck, how long it took, and whether they fixed a flagged task. Record these in the next test.
+- **What it tells me:** The core idea wasn't the problem; the navigation was. The app showed too much at once and didn't make the next step obvious.
+- **Result against "what would tell me I am wrong":** Inconclusive. The feedback points to a navigation problem, not a sign that the app doesn't help, but I didn't record whether the flag was fixed or how long setup took.
+
+### What I changed after the test
+- **Numbered tabs:** Home → 1. Vendors → 2. Tasks & flags → 3. Timeline, plus Settings.
+- **A "what to do here" strip on every tab,** with a single "Next →" button so it's always clear where to go.
+- **A simpler Home page:** the next step, four numbers, one "To do now" list of flags, check-ins, and checkpoints. Removed the timeline preview, the vendor list, and the details card (each already has its own tab).
+- **Simpler vendor rows:** contact details and check-in dates are folded under a "Contact & check-ins" toggle.
+
+**Next test:** Have a second person do the same task, time it, and note whether they can fix a flag without help.
