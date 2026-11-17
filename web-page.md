@@ -62,7 +62,7 @@ TaskTie replaces the email back-and-forth with a single checklist each vendor fi
 - **50–200 hours:** a planner's time per couple ([Northwestern Mutual](https://northwesternmutual.com/life-and-money/wedding-planning-guide-10-questions-to-ask-a-wedding-planner))
 
 ## 7. Pricing (two cards, the paid card outlined in sage)
-- **Starter: Free.** 1 wedding, full task library, vendor checklists.
+- **Starter: Free.** Your first 3 weddings, full task library, vendor checklists.
 - **Pro: $29/month.** Unlimited weddings, auto timeline, automatic updates.
 
 ## 8. FAQ
@@ -71,6 +71,9 @@ No. They get a link, check their tasks, and they're done.
 
 **Can I change the default task times?**
 Yes. Every task length is editable, and your changes carry into future weddings.
+
+**Does it work for events other than weddings?**
+Yes. TaskTie is built for weddings, but it works for any event with vendors.
 
 **What happens if the couple changes the dinner time?**
 Update it once and TaskTie shifts the timeline and alerts the vendors it affects.

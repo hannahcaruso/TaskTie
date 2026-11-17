@@ -36,7 +36,7 @@ What would tell me I am wrong: Planners say mix-ups happen "Rarely" or "Never," 
 **Result:** Not wrong. Both planners said mix-ups happen. Neither reported spending less than 15 minutes per vendor, although neither gave an exact number either.
 
 ## The app helps
-Who tests it: A classmate, on November 17.
+Who tests it: A classmate (test scheduled soon; results to be added here).
 What they do: Read the web page, then set up one wedding with 3 vendors and resolve one flagged task. Give feedback.
 What I write down: Where they got stuck and how long it took.
 What would tell me I am wrong: They can't find or fix the flagged task, or setup takes longer than emailing the 3 vendors would.

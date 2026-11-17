@@ -7,6 +7,8 @@
 ## Solution statement
 > TaskTie helps solo wedding planners make sure every wedding-day task has exactly one owner and a time slot. Planners send vendors a checklist, and TaskTie flags gaps and overlaps and builds the day-of timeline automatically. Today that work lives in email threads, memory, and spreadsheets, where tasks slip through and changes have to be made by hand.
 
+**Who it's for:** Built for wedding planners, but it works for any event with vendors. Both survey respondents planned non-wedding events and described the same problem.
+
 ## Core features
 | Feature | Pain point it solves (from problem.md) | User benefit |
 |---|---|---|
@@ -28,9 +30,10 @@
 ## What makes it different
 - It's built around **who does what**, not budgets, guest lists, or couple-facing planning.
 - It **flags gaps and overlaps** automatically, which a spreadsheet or email thread can't do.
+- **Built for weddings, works for any event with vendors:** corporate events, parties, and fundraisers have the same who-does-what problem.
 
 ## Business model
-- **Pricing (proposed, to test):** Free for 1 wedding; $29/month for unlimited weddings.
+- **Pricing (proposed, to test):** Free for your first 3 weddings; then $29/month for unlimited weddings.
 - **Revenue streams:** Monthly subscriptions from planners.
 
 ## Success metrics

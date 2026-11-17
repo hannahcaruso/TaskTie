@@ -19,6 +19,7 @@ The files build on each other and should be completed **in order**:
 
 ## Project snapshot (fill in)
 - **App name:** TaskTie
-- **Target user:** Solo, independent wedding planners running 10–14 weddings at once (~14 vendors each)
+- **Target user:** Solo, independent wedding planners running 10–14 weddings at once (~14 vendors each). Built for weddings, works for any event with vendors.
+- **Pricing:** Free for the first 3 weddings, then $29/month
 - **Problem in one sentence:** Planners spend ~45 minutes per vendor emailing about who handles what, and tasks still slip through (unclaimed, double-claimed, or timeline conflicts), which causes stress and a bad flow on the wedding day.
 - **Solution in one sentence:** TaskTie sends each vendor one checklist, flags tasks that are unclaimed or double-claimed, and builds a day-of timeline that updates automatically when anything changes.
