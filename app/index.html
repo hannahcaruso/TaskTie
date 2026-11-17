@@ -252,21 +252,21 @@ function dashboard(){
      <button class="x" title="Hide tips" onclick="S.hideTips=true;render()">×</button></div>`}
   <div class="head"><h1 class="serif" style="font-size:34px">Your weddings</h1>
    <div class="row" style="flex:none"><button class="btn ghost" onclick="demo()">Load demo weddings</button></div></div>
-  <div class="card"><h3>New wedding</h3><div class="row">
-   <div style="flex:2"><label for="nn">Couple</label><input id="nn" placeholder="e.g., Avery & Jordan"></div>
-   <div><label for="nd">Date</label><input id="nd" type="date"></div>
-   <button class="btn" onclick="if(nn.value.trim()){const w=newWedding(nn.value.trim(),nd.value);openW(w.id);toast('Wedding created. Add vendors next.')}">Create wedding</button></div></div>
   <div class="grid">${ws.map(w=>{const s=stats(w),d=daysTo(w.date);return`<div class="wcard" onclick="openW('${w.id}')">
     <div class="head"><h2 class="serif" style="font-size:22px">${esc(w.name)}</h2>${s.nf?`<span class="chip no">${s.nf} flag${s.nf>1?"s":""}</span>`:w.tasks.length?`<span class="chip ok">✓ No flags</span>`:""}</div>
     <div class="sub">${dateStr(w.date)}${d!==null?` · ${d>=0?d+" days to go":"past"}`:""}</div>
     <div class="prog"><i style="width:${s.total?Math.round(s.confirmed/s.total*100):0}%"></i></div>
-    <div class="sub">${s.confirmed}/${s.total} vendor tasks confirmed · ${s.emailed}/${w.vendors.length} vendors emailed</div></div>`;}).join("")||`<div class="card empty">No weddings yet. Create one above, or load the demo.</div>`}</div>`;
+    <div class="sub">${s.confirmed}/${s.total} vendor tasks confirmed · ${s.emailed}/${w.vendors.length} vendors emailed</div></div>`;}).join("")||`<div class="card empty">No weddings yet. Create one above, or load the demo.</div>`}</div>
+  <div class="card" style="margin-top:1.15rem"><h3>Add a new wedding</h3><div class="row">
+   <div style="flex:2"><label for="nn">Couple</label><input id="nn" placeholder="e.g., Avery & Jordan"></div>
+   <div><label for="nd">Date</label><input id="nd" type="date"></div>
+   <button class="btn" onclick="if(nn.value.trim()){const w=newWedding(nn.value.trim(),nd.value);openW(w.id);toast('Wedding created. Add vendors next.')}">Create wedding</button></div></div>`;
 }
 
 // ----- wedding views -----
 const V={
 overview(w,s){
-  const steps=[["Vendors added",w.vendors.length>0],["Vendors emailed",w.vendors.length&&s.emailed===w.vendors.length],["Vendors confirmed",s.total&&s.waitingV===0],["Flags fixed",w.tasks.length&&s.nf===0]];
+  const steps=[["Added",w.vendors.length>0],["Emailed",w.vendors.length&&s.emailed===w.vendors.length],["Confirmed",s.total&&s.waitingV===0],["Flags fixed",w.tasks.length&&s.nf===0]];
   const cur=steps.findIndex(x=>!x[1]);
   const NEXT=[
     ["Add your vendors","Each vendor's typical tasks load automatically.","Add vendors","vendors"],
@@ -276,17 +276,17 @@ overview(w,s){
   ][cur]||["You're ready for the wedding day 🎉","Every task has one confirmed owner and no conflicts.","Open timeline","timeline"];
   const d=daysTo(w.date),F=s.F,flagged=w.tasks.filter(t=>F[t.id]).slice(0,4);
   const nextTasks=[...w.tasks].sort((a,b)=>toMin(a.time)-toMin(b.time)).slice(0,6);
-  return`<div class="next"><div class="sub">NEXT STEP</div><h2 class="serif">${NEXT[0]}</h2><div class="sub" style="margin-bottom:12px">${NEXT[1]}</div>
+  return`<div class="next"><div class="sub">NEXT STEP</div><h2 class="serif" style="margin-bottom:12px">${NEXT[0]}</h2>
     <button class="btn" onclick="go('${NEXT[3]}')">${NEXT[2]} →</button>
     <div class="steps">${steps.map((x,i)=>`<span class="${x[1]?"done":i===cur?"cur":""}">${x[1]?"✓ ":""}${i+1}. ${x[0]}</span>`).join("")}</div></div>
   <div class="stats">
-    <div class="stat" onclick="go('details')"><span class="sub">Wedding day</span><b>${d===null?"—":d>=0?d:"Past"}</b><span class="sub">${d!==null&&d>=0?"days to go":"set a date"}</span></div>
-    <div class="stat" onclick="go('vendors')"><span class="sub">Vendors emailed</span><b>${s.emailed}/${w.vendors.length}</b></div>
-    <div class="stat" onclick="go('vendors')"><span class="sub">Tasks confirmed</span><b>${s.confirmed}/${s.total}</b></div>
-    <div class="stat ${s.nf?"alert":""}" onclick="go('tasks')"><span class="sub" style="color:${s.nf?"var(--coral)":"var(--sage2)"}">Open flags</span><b>${s.nf}</b></div></div>
+    <div class="stat" onclick="go('details')"><span class="sub">Days to go</span><b>${d===null?"—":d>=0?d:"Past"}</b></div>
+    <div class="stat" onclick="go('vendors')"><span class="sub">Emailed</span><b>${s.emailed}/${w.vendors.length}</b></div>
+    <div class="stat" onclick="go('vendors')"><span class="sub">Confirmed</span><b>${s.confirmed}/${s.total}</b></div>
+    <div class="stat ${s.nf?"alert":""}" onclick="go('tasks')"><span class="sub" style="color:${s.nf?"var(--coral)":"var(--sage2)"}">Flags</span><b>${s.nf}</b></div></div>
   <div class="g2"><div>
     <div class="card"><div class="head"><h2>To do now</h2>${s.nf?`<button class="btn sm ghost" onclick="go('tasks')">See all ${s.nf}</button>`:""}</div>
-      ${flagged.length?`<p class="hint">Fix these flags right here, or open Tasks &amp; flags.</p><div class="list">${flagged.map(t=>flagRow(w,t,F[t.id])).join("")}</div>`:`<p class="sub">✓ No flags to fix right now.</p>`}</div>
+      ${flagged.length?`<div class="list">${flagged.map(t=>`<div><div class="grow"><b>${esc(t.name)}</b><div class="sub">${fmt(toMin(t.time))}</div></div><span class="chip ${FL[F[t.id].k][0]}">${FL[F[t.id].k][1]}</span><button class="btn sm ghost" onclick="go('tasks')">Fix →</button></div>`).join("")}</div>`:`<p class="sub">✓ Nothing to fix.</p>`}</div>
   </div><div>
     ${checkins(w)}
     ${checkpoints(w,s)}
@@ -368,20 +368,19 @@ details(w){
 };
 function checkpoints(w,s){
   const n=w.vendors.length;
-  const CP=[[56,"All vendors emailed their checklist",n>0&&s.emailed===n],[28,"All vendors confirmed their tasks",s.total>0&&s.waitingV===0],[14,"All flags fixed",w.tasks.length>0&&s.nf===0],[7,"Final timeline printed and sent to vendors",!!w.finalSent,1]];
+  const CP=[[56,"Vendors emailed",n>0&&s.emailed===n],[28,"Vendors confirmed",s.total>0&&s.waitingV===0],[14,"Flags fixed",w.tasks.length>0&&s.nf===0],[7,"Timeline sent",!!w.finalSent,1]];
   const d=daysTo(w.date);
-  return`<div class="card"><div class="head"><h2>Checkpoints</h2><span class="sub">${w.date?"Before "+sd(w.date):"Set a date to see due dates"}</span></div>
-   <p class="hint">Check in at each milestone so gaps surface early, not on the wedding day.</p>
+  return`<div class="card"><div class="head"><h2>Checkpoints</h2></div>
    <div class="list">${CP.map(([wk,l,done,manual])=>{const due=w.date?addDays(w.date,-wk):null,late=!done&&d!==null&&d<=wk;
      return`<div>${manual?`<input type="checkbox" aria-label="${l}" ${done?"checked":""} onchange="W().finalSent=this.checked;render()">`:`<span style="width:1.25rem;text-align:center;font-weight:700;color:${done?"var(--oliveT)":"var(--muted)"}">${done?"✓":"○"}</span>`}
-     <div class="grow"><b>${l}</b><div class="sub">${wk/7} week${wk>7?"s":""} before${due?" · "+sd(due):""}</div></div>
+     <div class="grow"><b>${l}</b><div class="sub">${due?"By "+sd(due):wk/7+" wk before"}</div></div>
      <span class="chip ${done?"ok":late?"no":"wait"}">${done?"✓ Done":late?"Overdue":"Upcoming"}</span></div>`;}).join("")}</div></div>`;
 }
 function checkins(w){
   const due=w.vendors.filter(isDue);
-  return`<div class="card"><div class="head"><h2>Check-ins due</h2><span class="sub">Weekly rhythm</span></div>
-   ${due.length?`<div class="list">${due.map(v=>`<div><div class="grow"><b>${esc(v.name)}</b><div class="sub">${v.followUp?"Follow-up email due after your call":"Check-in due "+sd(v.nextCheck)} · last contact ${sd(v.lastContact)}</div></div>
-     ${v.followUp?`<button class="btn sm" onclick="copyEmail('${v.id}','followup')">Copy follow-up</button>`:`<button class="btn sm ghost" onclick="logContact('${v.id}','email')">Log email</button><button class="btn sm ghost" onclick="logContact('${v.id}','call')">Log call</button>`}</div>`).join("")}</div>`:`<p class="sub">✓ You're caught up with every vendor.</p>`}</div>`;
+  return`<div class="card"><div class="head"><h2>Check-ins due</h2></div>
+   ${due.length?`<div class="list">${due.map(v=>`<div><div class="grow"><b>${esc(v.name)}</b><div class="sub">${v.followUp?"Send follow-up email":"Due "+sd(v.nextCheck)}</div></div>
+     ${v.followUp?`<button class="btn sm" onclick="copyEmail('${v.id}','followup')">Copy follow-up</button>`:`<button class="btn sm ghost" onclick="logContact('${v.id}','email')">Log email</button><button class="btn sm ghost" onclick="logContact('${v.id}','call')">Log call</button>`}</div>`).join("")}</div>`:`<p class="sub">✓ All caught up.</p>`}</div>`;
 }
 function guide(step,text,next,label){return`<div class="guide"><span class="gstep">${step}</span><div class="grow">${text}</div>${next?`<button class="btn sm" onclick="go('${next}')">${label} →</button>`:""}</div>`;}
 function ownerOpts(w,t){return[{id:PLANNER,name:"You (planner)"},...w.vendors].map(v=>`<option value="${v.id}">${esc(v.name)}${t.claims.some(c=>c.v===v.id)?" (claimed)":""}</option>`).join("");}
